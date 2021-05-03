@@ -1,5 +1,4 @@
 import os
-import re
 
 
 # Initialize html file
@@ -32,7 +31,7 @@ def init_html(filename):
 
 # Read input file
 def read_file(filename):
-
+    pass
 
 
 test_file = init_file("test.html")
