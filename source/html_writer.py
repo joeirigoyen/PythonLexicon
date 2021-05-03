@@ -4,6 +4,8 @@ Author: Raúl Youthan Irigoyen Osorio
 import os
 import re
 
+file_directory  = ""
+source_directory = os.path.abspath("C:\\Users\\Joe\\Documents\\TEC\\Materias\\4to\\IMC\\PythonHighlighter\\PythonLexicon\\source\\source.txt")
 
 # Write initial html tags including css stylesheet linking
 def init_html(file_dir):
@@ -40,7 +42,7 @@ def init_html(file_dir):
             </div>
             <div class="content">
                 <!-- window content -->
-                <span class="keyword">print</span>(<span class="string">"Super Joe Cool"</span>)
+                <span class="keyword">print</span>(<span class="string">"Super Joe Cool"</span>)<br>
             '''
     # Write initial tags to file
     f.write(init_tags)
@@ -50,7 +52,9 @@ def init_html(file_dir):
 
 # Initialize html file
 def init_file(filename):
-    # Get absolute directory for html files
+    # Get absolute directory for html file
+    global file_directory
+    file_directory = os.path.abspath("PythonLexicon\\test_files\\" + filename)
     file_dir = os.path.abspath("PythonLexicon\\test_files\\" + filename)
     # Open file in write mode
     f = open(file_dir, "w+")
@@ -61,9 +65,9 @@ def init_file(filename):
 
 
 # Write final html tags
-def end_file(filename):
+def end_file():
     # Get absolute directory for html files
-    file_dir = os.path.abspath("PythonLexicon\\test_files\\" + filename)
+    file_dir = file_directory
     # Open file in write mode
     f = open(file_dir, "a")
     # Write tags
@@ -75,10 +79,18 @@ def end_file(filename):
 
 # Search for functions/classnames in file
 def find_fun(string):
-    match_str = r"([a-zA-Z]+\(\))"
+    # Open file
+    f = open(file_directory, "a")
+    # Look for matching substring in line
+    match_str = r"([a-zA-Z_-]+\(\):)"
     result = re.search(match_str, string)
-    if (result is not None):
-        return result.group()[:-2]
+    if result is not None:
+        # Write initial tag in file
+        f.write("\t<span class=\"function\">")
+        f.write(f"{result.group()[:-3]}</span><br>")
+        # Close program
+        f.close()
+        return result.group()[:-3]
     else:
         return ""
 
@@ -87,7 +99,7 @@ def find_fun(string):
 def find_call(string):
     match_str = r"\.([^)]+\(\))"
     result = re.search(match_str, string)
-    if (result is not None):
+    if result is not None:
         return result.group()[1:-2]
     else:
         return ""
@@ -112,12 +124,28 @@ def find_string(string):
     else:
         return ""
 
+# Read source file
+def read_file():
+    # Open file
+    f = open(source_directory, "r")
+    # Get lines
+    lines = f.readlines()
+    for line in lines:
+        if ('(' in line):
+            find_fun(line)
+    f.close()
+
+
+def q1():
+
+
 
 # Run full program
 if __name__ == '__main__':
     init_file("test.html")
-    print(find_fun("def hello():"))
-    print(find_arg("def print(integer):"))
-    print(find_call("hello.__main__()"))
-    print(find_string("\"poop\""))
-    end_file("test.html")
+    # print(find_fun("def hello():"))
+    # print(find_arg("def print(integer):"))
+    # print(find_call("hello.__main__()"))
+    # print(find_string("\"poop\""))
+    read_file()
+    end_file()
