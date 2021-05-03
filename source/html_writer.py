@@ -2,10 +2,47 @@
 Author: Raúl Youthan Irigoyen Osorio
 """
 import os
+from os.path import curdir
 import re
+
+curr_state = 0
+curr_str = ""
 
 file_directory  = ""
 source_directory = os.path.abspath("C:\\Users\\Joe\\Documents\\TEC\\Materias\\4to\\IMC\\PythonHighlighter\\PythonLexicon\\source\\source.txt")
+
+keywords = {"def": 1,
+            "if": 2,
+            "for": 3,
+            "else": 4,
+            "break": 5,
+            "continue": 6,
+            "while": 7,
+            "import": 8,
+            "from": 9,
+            "is": 10,
+            "and": 11,
+            "or": 12,
+            "as": 13,
+            "assert": 14,
+            "class": 15,
+            "del": 16,
+            "elif": 17,
+            "except": 18,
+            "False": 19,
+            "True": 20,
+            "finally": 21,
+            "global": 22,
+            "in": 23,
+            "lambda": 24,
+            "None": 25,
+            "nonlocal": 26,
+            "not": 27,
+            "raise": 28,
+            "return": 29,
+            "try": 30,
+            "with": 31,
+            "yield": 32}
 
 # Write initial html tags including css stylesheet linking
 def init_html(file_dir):
@@ -42,7 +79,6 @@ def init_html(file_dir):
             </div>
             <div class="content">
                 <!-- window content -->
-                <span class="keyword">print</span>(<span class="string">"Super Joe Cool"</span>)<br>
             '''
     # Write initial tags to file
     f.write(init_tags)
@@ -77,42 +113,20 @@ def end_file():
     f.close()
 
 
-# Search for functions/classnames in file
-def find_fun(string):
+# Search for function declarations in file
+def find_fun(line):
     # Open file
     f = open(file_directory, "a")
     # Look for matching substring in line
     match_str = r"([a-zA-Z_-]+\(\):)"
-    result = re.search(match_str, string)
+    result = re.search(match_str, line)
     if result is not None:
         # Write initial tag in file
         f.write("\t<span class=\"function\">")
-        f.write(f"{result.group()[:-3]}</span><br>")
+        f.write(f"{result.group()[:-3]}</span>")
+        f.write(f"{result.group()[-3:-1]}</span>")
         # Close program
         f.close()
-        return result.group()[:-3]
-    else:
-        return ""
-
-
-# Find function call
-def find_call(string):
-    match_str = r"\.([^)]+\(\))"
-    result = re.search(match_str, string)
-    if result is not None:
-        return result.group()[1:-2]
-    else:
-        return ""
-
-
-# Find arguments inside a function
-def find_arg(string):
-    match_str = r"\(([^)]+\))"
-    result = re.search(match_str, string)
-    if result is not None:
-        return result.group()[1:-1]
-    else:
-        return ""
 
 
 # Find string
@@ -124,28 +138,50 @@ def find_string(string):
     else:
         return ""
 
-# Read source file
-def read_file():
-    # Open file
-    f = open(source_directory, "r")
-    # Get lines
-    lines = f.readlines()
-    for line in lines:
-        if ('(' in line):
-            find_fun(line)
+
+# Add keyword html tags
+def found_keyword(keyword):
+    f = open(file_directory, "a")
+    f.write("\t<span class=\"keyword\">" + keyword + "</span>")
     f.close()
 
 
-def q1():
+# Write 
+def write_br():
+    f = open(file_directory, "a")
+    f.write("<br>")
+    f.close()
 
+# Read file
+def read_file():
+    # Call global curr_str variable
+    global curr_state, curr_str
+    # Open reading file
+    rf = open(source_directory, "r")
+    # Get lines
+    lines = rf.read().splitlines(True)
+    # Scan every line
+    for line in lines:
+        for char in line:
+            # Add char to current string
+            curr_str += char
+            # If char is newline, reset current string
+            if char == "\n":
+                curr_state = 0
+                curr_str = ""
+                write_br()
+            # If char is # set as comment
+            if char == "#":
+                curr_state = 1
+            
+            
+
+            
+    rf.close()
 
 
 # Run full program
 if __name__ == '__main__':
     init_file("test.html")
-    # print(find_fun("def hello():"))
-    # print(find_arg("def print(integer):"))
-    # print(find_call("hello.__main__()"))
-    # print(find_string("\"poop\""))
     read_file()
     end_file()
