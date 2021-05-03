@@ -113,9 +113,11 @@ def find_string(string):
         return ""
 
 
-init_file("test.html")
-print(find_fun("def hello():"))
-print(find_arg("def print(integer):"))
-print(find_call("hello.__main__()"))
-print(find_string("\"poop\""))
-end_file("test.html")
+# Run full program
+if __name__ == '__main__':
+    init_file("test.html")
+    print(find_fun("def hello():"))
+    print(find_arg("def print(integer):"))
+    print(find_call("hello.__main__()"))
+    print(find_string("\"poop\""))
+    end_file("test.html")
