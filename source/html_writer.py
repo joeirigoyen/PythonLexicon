@@ -4,20 +4,21 @@ import os
 # Initialize html file
 def init_file(filename):
     # Get absolute directory for test files
-    file_dir = os.path.abspath("test_files")
+    file_dir = os.path.abspath("PythonLexicon\\test_files\\" + filename)
+    print(file_dir)
     # Open file in write mode
-    f = open(filename, "w+")
+    f = open(file_dir, "w+")
     # Close file
     f.close()
     # Write initial html tags
-    init_html(file_dir + "\\" + filename)
+    init_html(file_dir)
     return f
 
 
 # Write initial html tags including css stylesheet linking
-def init_html(filename):
+def init_html(file_dir):
     # Open file in write mode
-    f = open(filename, "w+")
+    f = open(file_dir, "w+")
     # Set initial tags
     init_tags = '''<html>
     <head>
