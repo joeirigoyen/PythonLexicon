@@ -162,15 +162,20 @@ h3 {
       0 0 5px #fff,
       0 0 10px #fff,
       0 0 20px #fff,
-      0 0 40px #ffe373,
-      0 0 80px #ffe373,
-      0 0 90px #ffe373,
-      0 0 100px #ffe373,
-      0 0 150px #ffe373;
+      0 0 40px #0cfff3,
+      0 0 80px #0cfff3,
+      0 0 90px #0cfff3,
+      0 0 100px #0cfff3,
+      0 0 150px #0cfff3;
   }
 /* title END*/
 
 /* content START*/
+p {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
 .content {
     padding-top: 10px;
     padding-left: 10px;
@@ -186,21 +191,36 @@ h3 {
 }
 
 .keyword {
-    line-height: 9px;
+    line-height: 0px;
     color: rgb(172, 0, 172);
 }
 
 .string {
     line-height: 9px;
-    color: rgb(255, 232, 102);
+    color: rgb(255, 208, 0);
 }
 
 .argument {
-    line-height: 9px;
+    line-height: 0px;
     color: rgb(137, 202, 255);
 }
 
 .comment {
     line-height: 0px;
     color: rgb(11, 136, 0);
+}
+
+.decorator {
+    line-height: 0px;
+    color: rgb(255, 231, 11);
+}
+
+.tab {
+    line-height: 0px;
+    padding-left: 40px;
+}
+
+.number {
+    line-height: 0px;
+    color: rgb(255, 215, 104);
 }

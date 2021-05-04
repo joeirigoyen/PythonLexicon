@@ -5,23 +5,22 @@ import os
 import os.path
 import re
 
-curr_state = 0
-curr_line = ""
-
+# Directories
 file_directory  = ""
 source_directory = os.path.abspath("C:\\Users\\Joe\\Documents\\TEC\\Materias\\4to\\IMC\\PythonHighlighter\\PythonLexicon\\source\\source.txt")
 
 # Tokens
-function_token = r"\s([a-zA-Z_][\w]*)\([\w\W]*\):"
+function_token = r"\s([a-zA-Z_][\w]*)\(.*\):"
 call_token = r"([a-zA-Z_][\w]*)\([\w\W]*\)"
 arg_token = r"[\(](\w+[,]*[\s\S][\w]+)\)"
 string_token = r"([\"][^\"]*\")"
 number_token = r"(^[0-9]*[\.]{0,1}[0-9]*)"
 comment_token = r"(#.*)"
 declare_token = r"(^[^0-9][\w]+)[\s\S]="
-decorator_token = r"(@[\S]*)"
+decorator_token = r"(@\S*)"
+tab_token = r"(\s{4})"
 
-
+# Keywords
 keywords = {"def": "def",
             "if": "if",
             "for": "for",
@@ -56,7 +55,6 @@ keywords = {"def": "def",
             "yield": "yield",
             "pass": "pass"}
 
-
 # Write initial html tags including css stylesheet linking
 def init_html(file_dir):
     # Open file in write mode
@@ -69,7 +67,7 @@ def init_html(file_dir):
     <body>
         <div class="container">
             <h1 class="neon">PYTHON SYNTAX HIGHLIGHTER</h1>
-            <h3>By: Youthan Irigoyen</h3>
+            <h3>By Youthan Irigoyen and Jorge Penagos</h3>
         </div>
         <div class="window">
             <div class="titlebar">
@@ -112,11 +110,6 @@ def init_file(filename):
     # Write initial html tags
     init_html(file_dir)
 
-def write_to_file(line):
-    f = open(file_directory, "a")
-    f.write(line)
-    f.close()
-
 
 # Write final html tags
 def end_file():
@@ -131,34 +124,69 @@ def end_file():
     f.close()
 
 
-# Read file
+def found_regex(line, start, end, spanclass, token):
+    return re.sub(token, "<span class=\"" + spanclass + "\">" + line[start:end] + "</span>", line)
+
+
+def find_matches(line: str, token, spanclass):
+    des_match = re.findall(token, line)
+    if (des_match is not None):
+        for i in des_match:
+            line = found_regex(line, line.index(i), line.index(i) + len(i), spanclass, i)
+    return line
+
+def find_in_word(line, word: str, spanclass):
+    curr_word = ""
+    for char in word:
+        curr_word += char
+    if curr_word.isnumeric():
+        line = find_matches(line, char, spanclass)
+    return line
+
+
+# Read full file by char
 def read_file():
-    # Call global curr_str variable
-    global curr_line
-    # Open reading file
-    rf = open(source_directory, "r")
+    counter = 0
+    # Open file
+    f = open(source_directory, "r")
     # Get lines
-    lines = rf.readlines()
+    lines = f.readlines()
+    # Read lines by character
     for line in lines:
-        curr_line = "<p>"
-        # Look for comments
-        com_sub = re.findall(comment_token, line)
-        if len(com_sub) != 0:
-            for i in range(len(com_sub)):
-                curr_line += "<span class=\"comment\">" + com_sub[i] + "</span>"
-            write_to_file(curr_line)
-            continue
-        # Look for function declarations
-        fun_sub = re.search(function_token, line)
-        if (fun_sub is not None):
-            for i in range(len(fun_sub.groups())):
-                curr_line += "<span class=\"function\">" + fun_sub.groups()[i] + "</span>"
-            curr_line += "</p>"
-        write_to_file(curr_line)
+        counter += 1
+        # Add html paragraph
+        write_to_file("\t<p>")
+        # Find regexps in line
+        # Comments
+        line = find_matches(line, comment_token, "comment")
+        #com_match = re.search(comment_token, line)
+        #if (com_match is not None):
+            #line = found_regex(line, com_match.start(), com_match.end(), "comment", comment_token)
+        # Decorators
+        line = find_matches(line, decorator_token, "decorator")
+        # Functions
+        line = find_matches(line, function_token, "function")
+        # Arguments
+        line = find_matches(line, arg_token, "argument")
+        # Find tabs
+        line = find_matches(line, tab_token, "tab")
+        # Find function calls
+        line = find_matches(line, call_token, "function")
+        # Find string
+        # line = find_matches(line, string_token, "string")
+        # Find numbers
+        for word in line:
+            line = find_in_word(line, word, "number")
+        # End html paragraph
+        write_to_file(line)
+        write_to_file("</p>\n\t\t\t")
 
 
-    # Close file
-    rf.close()
+# Write line into file
+def write_to_file(line):
+    f = open(file_directory, "a")
+    f.write(line)
+    f.close()
 
 
 # Run full program
