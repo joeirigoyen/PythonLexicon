@@ -172,28 +172,35 @@ h3 {
 
 /* content START*/
 .content {
+    padding-top: 10px;
     padding-left: 10px;
     padding-bottom: 10px;
     margin-bottom: 5px;
-    line-height: 45px;
+    line-height: 10px;
 }
 
 .function {
     line-height: 0px;
+    padding-top: 10px;
     color: rgb(0, 140, 255);
 }
 
 .keyword {
-    line-height: 0px;
+    line-height: 9px;
     color: rgb(172, 0, 172);
 }
 
 .string {
-    line-height: 0px;
+    line-height: 9px;
     color: rgb(255, 232, 102);
 }
 
 .argument {
-    line-height: 0px;
+    line-height: 9px;
     color: rgb(137, 202, 255);
+}
+
+.comment {
+    line-height: 0px;
+    color: rgb(11, 136, 0);
 }

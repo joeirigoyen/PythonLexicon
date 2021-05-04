@@ -2,47 +2,60 @@
 Author: Raúl Youthan Irigoyen Osorio
 """
 import os
-from os.path import curdir
+import os.path
 import re
 
 curr_state = 0
-curr_str = ""
+curr_line = ""
 
 file_directory  = ""
 source_directory = os.path.abspath("C:\\Users\\Joe\\Documents\\TEC\\Materias\\4to\\IMC\\PythonHighlighter\\PythonLexicon\\source\\source.txt")
 
-keywords = {"def": 1,
-            "if": 2,
-            "for": 3,
-            "else": 4,
-            "break": 5,
-            "continue": 6,
-            "while": 7,
-            "import": 8,
-            "from": 9,
-            "is": 10,
-            "and": 11,
-            "or": 12,
-            "as": 13,
-            "assert": 14,
-            "class": 15,
-            "del": 16,
-            "elif": 17,
-            "except": 18,
-            "False": 19,
-            "True": 20,
-            "finally": 21,
-            "global": 22,
-            "in": 23,
-            "lambda": 24,
-            "None": 25,
-            "nonlocal": 26,
-            "not": 27,
-            "raise": 28,
-            "return": 29,
-            "try": 30,
-            "with": 31,
-            "yield": 32}
+# Tokens
+function_token = r"\s([a-zA-Z_][\w]*)\([\w\W]*\):"
+call_token = r"([a-zA-Z_][\w]*)\([\w\W]*\)"
+arg_token = r"[\(](\w+[,]*[\s\S][\w]+)\)"
+string_token = r"([\"][^\"]*\")"
+number_token = r"(^[0-9]*[\.]{0,1}[0-9]*)"
+comment_token = r"(#.*)"
+declare_token = r"(^[^0-9][\w]+)[\s\S]="
+decorator_token = r"(@[\S]*)"
+
+
+keywords = {"def": "def",
+            "if": "if",
+            "for": "for",
+            "else": "else",
+            "break": "break",
+            "continue": "continue",
+            "while": "while",
+            "import": "import",
+            "from": "from",
+            "is": "is",
+            "and": "and",
+            "or": "or",
+            "as": "as",
+            "assert": "assert",
+            "class": "class",
+            "del": "del",
+            "elif": "elif",
+            "except": "except",
+            "False": "false",
+            "True": "True",
+            "finally": "finally",
+            "global": "global",
+            "in": "in",
+            "lambda": "lambda",
+            "None": "None",
+            "nonlocal": "nonlocal",
+            "not": "not",
+            "raise": "raise",
+            "return": "return",
+            "try": "try",
+            "with": "with",
+            "yield": "yield",
+            "pass": "pass"}
+
 
 # Write initial html tags including css stylesheet linking
 def init_html(file_dir):
@@ -99,6 +112,11 @@ def init_file(filename):
     # Write initial html tags
     init_html(file_dir)
 
+def write_to_file(line):
+    f = open(file_directory, "a")
+    f.write(line)
+    f.close()
+
 
 # Write final html tags
 def end_file():
@@ -113,70 +131,33 @@ def end_file():
     f.close()
 
 
-# Search for function declarations in file
-def find_fun(line):
-    # Open file
-    f = open(file_directory, "a")
-    # Look for matching substring in line
-    match_str = r"([a-zA-Z_-]+\(\):)"
-    result = re.search(match_str, line)
-    if result is not None:
-        # Write initial tag in file
-        f.write("\t<span class=\"function\">")
-        f.write(f"{result.group()[:-3]}</span>")
-        f.write(f"{result.group()[-3:-1]}</span>")
-        # Close program
-        f.close()
-
-
-# Find string
-def find_string(string):
-    match_str = r"([\"\'])(?:(?=(\\?))\2.)*?\1"
-    result = re.search(match_str, string)
-    if result is not None:
-        return result.group()[1:-1]
-    else:
-        return ""
-
-
-# Add keyword html tags
-def found_keyword(keyword):
-    f = open(file_directory, "a")
-    f.write("\t<span class=\"keyword\">" + keyword + "</span>")
-    f.close()
-
-
-# Write 
-def write_br():
-    f = open(file_directory, "a")
-    f.write("<br>")
-    f.close()
-
 # Read file
 def read_file():
     # Call global curr_str variable
-    global curr_state, curr_str
+    global curr_line
     # Open reading file
     rf = open(source_directory, "r")
     # Get lines
-    lines = rf.read().splitlines(True)
-    # Scan every line
+    lines = rf.readlines()
     for line in lines:
-        for char in line:
-            # Add char to current string
-            curr_str += char
-            # If char is newline, reset current string
-            if char == "\n":
-                curr_state = 0
-                curr_str = ""
-                write_br()
-            # If char is # set as comment
-            if char == "#":
-                curr_state = 1
-            
-            
+        curr_line = "<p>"
+        # Look for comments
+        com_sub = re.findall(comment_token, line)
+        if len(com_sub) != 0:
+            for i in range(len(com_sub)):
+                curr_line += "<span class=\"comment\">" + com_sub[i] + "</span>"
+            write_to_file(curr_line)
+            continue
+        # Look for function declarations
+        fun_sub = re.search(function_token, line)
+        if (fun_sub is not None):
+            for i in range(len(fun_sub.groups())):
+                curr_line += "<span class=\"function\">" + fun_sub.groups()[i] + "</span>"
+            curr_line += "</p>"
+        write_to_file(curr_line)
 
-            
+
+    # Close file
     rf.close()
 
 
