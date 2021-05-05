@@ -14,14 +14,12 @@ source_directory = os.path.abspath("C:\\Users\\Joe\\Documents\\TEC\\Materias\\4t
 
 # Read full file by char
 def read_file():
-    counter = 0
     # Open file
     f = open(source_directory, "r")
     # Get lines
     lines = f.readlines()
     # Read lines by character
     for line in lines:
-        counter += 1
         # Add html paragraph
         hw.write_to_file("\t<p>")
         # Find regexps in line
@@ -38,7 +36,7 @@ def read_file():
         # Find function calls
         line = pf.find_matches(line, pf.call_token, "function")
         # Find escape characters
-        #line = pf.find_matches(line, pf.escape_token, "escape")
+        line = pf.find_matches(line, pf.escape_token, "escape")
         # Find special elements
         for word in line.split():
             # Keywords
@@ -46,7 +44,8 @@ def read_file():
                 line = pf.find_matches(line, word.replace("</span>", ""), "keyword")
             # Strings
             if "class=" not in word and "\"" in word:
-                line = re.sub(word, "<span class=\"string\">" + word + "</span>", line) 
+                line = re.sub(word, "<span class=\"string\">" + word + "</span>", line)
+ 
 
         # End html paragraph
         hw.write_to_file(line)

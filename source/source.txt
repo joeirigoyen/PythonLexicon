@@ -5,6 +5,7 @@ def this_fun(arg1, arg2): # Comment # Other comment
         html.print(3)
 
 # Comment above function
-"""docstring"""
+"""docstring
+"""
 def poop(pants):
     return "pants"
