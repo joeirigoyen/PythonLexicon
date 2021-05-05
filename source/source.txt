@@ -2,4 +2,9 @@
 def this_fun(arg1, arg2): # Comment # Other comment
     give_up(arg1) # This is another comment
     for i in arg2:
-        print(3)
+        html.print(3)
+
+# Comment above function
+"""docstring"""
+def poop(pants):
+    return "pants"
