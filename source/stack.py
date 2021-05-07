@@ -9,13 +9,22 @@ class Stack():
         self.items.append(item)
 
     def pop(self):
-        return self.items.pop()
+        if not self.is_empty():
+            return self.items.pop()
+        else:
+            return None
 
     def peek(self):
-        return self.items[-1]
+        if not self.is_empty():
+            return self.items[-1]
+        else:
+            return None
     
     def size(self):
         return len(self.items)
+
+    def flush(self):
+        self.items = []
 
     def __str__(self) -> str:
         string = ""

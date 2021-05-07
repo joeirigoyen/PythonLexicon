@@ -12,6 +12,8 @@ number_token = r"[\s\(=\+\*/]([0-9]*\.*[0-9]+)"
 function_token = r"([a-zA-Z_][\w]*)\(.*\)"
 arg_token = r"\(([\s\w_,]+)\)"
 tab_token = r"(\s{4})"
+tokens = [comment_token, decorator_token, string_token, number_token, function_token, arg_token, tab_token]
+
 
 # Keywords
 keywords = {"def": "def",
@@ -59,3 +61,10 @@ def find_matches(line: str, token, spanclass):
         for i in des_match:
             line = found_regex(line, line.index(i), line.index(i) + len(i), spanclass, i)
     return line
+
+
+def assign_regex():
+    regexs = ep.get_regexs(r"PythonLexicon\source\expressions.txt")
+    for i in range(len(tokens)):
+        if regexs[i] != None:
+            tokens[i] = regexs[i]

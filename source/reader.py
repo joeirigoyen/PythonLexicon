@@ -1,6 +1,7 @@
 """
 Author: Raúl Youthan Irigoyen Osorio
 """
+import time
 import os
 import os.path
 import re
@@ -58,6 +59,10 @@ def read_file():
 
 # Run full program
 if __name__ == '__main__':
+    init_time = time.time()
     hw.init_file("test.html")
+    pf.assign_regex()
     read_file()
     hw.end_file()
+    finish_time = time.time() - init_time
+    print("Runtime: " + str(finish_time))

@@ -5,6 +5,9 @@ import re
 import stack
 
 
+# Create empty stack
+curr_stack = stack.Stack()
+
 # Keywords
 keywords = {"def": "def",
             "if": "if",
@@ -41,9 +44,9 @@ keywords = {"def": "def",
             "pass": "pass"}
 
 # Replaceable elements
-key_elems = {'$': r'0-9',
-             '?': r'a-zA-Z',
-             '%': r'a-zA-Z0-9',
+key_elems = {'$': r'[0-9]',
+             '?': r'[a-zA-Z]',
+             '%': r'[a-zA-Z0-9]',
              '-': r'\s',
              'L': r'\(',
              'R': r'\)',
@@ -60,17 +63,19 @@ operators = ['*', '+', '4', '|', '¬']
 
 # Rewrite symbols in regex notation
 def to_regex_notation(sexp: str):
-    new_line = r""
-    for c in sexp:
-        if c != ')' and c != '(':
-            try:
-                new_line += key_elems[c]
-            except KeyError:
-                new_line += c
-    return new_line
+    if sexp != None:
+        new_line = r""
+        for c in sexp:
+            if c != ')' and c != '(':
+                try:
+                    new_line += key_elems[c]
+                except KeyError:
+                    new_line += c
+        print(new_line)
+        return new_line
 
 
-# Convert list elements to a string
+# Pass list to string
 def to_string(l: list):
     string = ""
     for elem in l:
@@ -78,43 +83,81 @@ def to_string(l: list):
     return string
 
 
-# Test function
-def test_func(s: stack.Stack):
-    # Variable list
-    variables = []
-    # If stack is still not empty
-    while not s.is_empty():
-        # Get top element from stack
-        p = s.pop()
-        # If top element is an operator
-        if p in operators:
-            # If operator is *
-            if p == '*':
-                variables.extend(p)
+# Group by or
+def group_or(args):
+    string = ""
+    for i in range(len(args)):
+        if i + 1 != len(args):
+            string += args[i] + '|'
+        else:
+            string += args[i]
+    return string
+
+
+# Group arguments
+def group_args(args: list):
+    string = "("
+    args.reverse()
+    for arg in args:
+        string += arg
+    string += ")"
+    return string
+
+
+def get_sequence(args: list):
+    string = ""
+    args.reverse()
+    for arg in args:
+        string += arg
+    return string
+
+
+def operate():
+    global curr_stack
+    arguments = []
+    while True:
+        if not curr_stack.is_empty():
+            p = curr_stack.pop()
+        else:
+            break
+        if p == '*' or p == '+':
+            arguments.append(p)
+            curr_stack.push("".join(arguments))
+            break
+        if p == '¬':
+            curr_stack.push(group_args(arguments))
+            break
+        if p == '&':
+            curr_stack.push(get_sequence(arguments))
+            break
+        if p == '|':
+            curr_stack.push(group_or(arguments))
             break
         else:
-            variables.extend(p)
-    print(variables)
+            arguments.append(p)
 
 
 # Process line by word
-def process_line(line: str):
-    # Create empty stack
-    curr_stack = stack.Stack()
+def read_line(line: str):
+    global curr_stack
+    curr_stack.flush()
     # Iterate over line
     for word in re.split(r'\(| ', line):
+        word = word.strip()
         # If word is a keyword
-        if word.strip() in keywords:
+        if ')' not in word and len(word) > 0:
             # Add full word to stack
             curr_stack.push(word)
-        elif ')' not in word.strip():
-            # Add full word to stack
-            curr_stack.push(word)
-        print(curr_stack)
+        # If word contains ')'
+        elif ')' in word:
+            # Pop from stack until operator is found
+            operate()
+    return curr_stack.peek()
 
 
 # Read file
-def read_file(filename: str):
+def get_regexs(filename: str):
+    regexs = []
     # Open file
     f = open(filename)
     # Get lines
@@ -122,8 +165,7 @@ def read_file(filename: str):
     # Evaluate lines
     for line in lines:
         line = line.replace('Â', '')
-        process_line(line)
-
-
-# Main execution
-read_file(r"PythonLexicon\source\expressions.txt")
+        new_line = read_line(line)
+        new_regex = to_regex_notation(new_line)
+        regexs.append(new_regex)
+    return regexs
