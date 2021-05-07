@@ -1,0 +1,8 @@
+(¬ # (* . ))
+(¬ @ (* ; ))
+(¬ (| (\" (* . ) \" ) (\' (* . ) \' )))
+([\sL=~/] )( ¬ (* $ ) (* ° ) (+ $ ))
+(¬ (?_ )(* \w ))(L (* . ) R )
+(¬ (| def if elif else for while break continue return pass yield True False None with import is not in and or as assert class del except raise try finally global lambda nonlocal ))
+(\ L )( ¬ (+ ([%_,-] )))(\ R )
+(¬ (4 (- )))

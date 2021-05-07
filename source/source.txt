@@ -1,11 +1,22 @@
-@this_is_a_decorator @second_decorator # Commented decorator
-def this_fun(arg1, arg2): # Comment # Other comment
-    give_up(arg1) # This is another comment
-    for i in arg2:
-        html.print(3)
+# Code implemented by Youthan Irigoyen & Jorge Penagos
+
+import re
+
 
 # Comment above function
-"""docstring
-"""
-def poop(pants):
-    return "pants"
+@function_decorator
+def function_one():
+    # Comment above function call
+    print(1 + 3.5)
+
+
+# Comment above second function
+def function_two(arg1, arg2):
+    # Comment again
+    return "function two!"
+
+
+# Main function
+if __name__ == '__main__':
+    re.fake_function()
+    function_one()

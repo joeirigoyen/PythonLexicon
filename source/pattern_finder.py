@@ -1,17 +1,17 @@
 # Author: Raúl Youthan Irigoyen Osorio
 import re
+import reader as rd
+import expression_parser as ep
+
 
 # Tokens
-function_token = r"\s([a-zA-Z_][\w]*)\(.*\):"
-call_token = r"([a-zA-Z_][\w]*)\([\w\W]*\)"
-arg_token = r"[\(](\w+[,]*[\s\S][\w]+)\)"
-string_token = r"([\"][^\"]*\")"
-number_token = r"(^[0-9]*[\.]{0,1}[0-9]*)"
 comment_token = r"(#.*)"
-declare_token = r"(^[^0-9][\w]+)[\s\S]="
 decorator_token = r"(@\S*)"
+string_token = r"([\"].*[\"]|[\'].*[\'])"
+number_token = r"[\s\(=\+\*/]([0-9]*\.*[0-9]+)"
+function_token = r"([a-zA-Z_][\w]*)\(.*\)"
+arg_token = r"\(([\s\w_,]+)\)"
 tab_token = r"(\s{4})"
-escape_token = r"(\\[a-zA-Z])"
 
 # Keywords
 keywords = {"def": "def",
@@ -50,7 +50,7 @@ keywords = {"def": "def",
 
 
 def found_regex(line, start, end, spanclass, token):
-    return re.sub(token, "<span class=\"" + spanclass + "\">" + line[start:end] + "</span>", line)
+    return re.sub(token, "<span class=\"" + spanclass + "\" >" + line[start:end] + "</span>", line)
 
 
 def find_matches(line: str, token, spanclass):
@@ -58,9 +58,4 @@ def find_matches(line: str, token, spanclass):
     if (des_match is not None):
         for i in des_match:
             line = found_regex(line, line.index(i), line.index(i) + len(i), spanclass, i)
-    return line
-
-
-def find_in_word(line, word: str, spanclass):
-    
     return line
