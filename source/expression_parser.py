@@ -57,9 +57,6 @@ key_elems = {'$': r'[0-9]',
              ';': r'\S'
             }
 
-# Operators
-operators = ['*', '+', '4', '|', '¬']
-
 
 # Rewrite symbols in regex notation
 def to_regex_notation(sexp: str):
@@ -104,6 +101,7 @@ def group_args(args: list):
     return string
 
 
+# Get a string with all elements in sequence
 def get_sequence(args: list):
     string = ""
     args.reverse()
@@ -112,6 +110,7 @@ def get_sequence(args: list):
     return string
 
 
+# Look for operator in stack
 def operate():
     global curr_stack
     arguments = []
@@ -120,7 +119,7 @@ def operate():
             p = curr_stack.pop()
         else:
             break
-        if p == '*' or p == '+':
+        if p == '*' or p == '+' or p == '4':
             arguments.append(p)
             curr_stack.push("".join(arguments))
             break
